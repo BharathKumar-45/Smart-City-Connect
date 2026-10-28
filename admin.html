@@ -1,0 +1,248 @@
+
+{% extends "base.html" %}
+
+{% block title %}Admin | SmartCity Connect{% endblock %}
+
+{% block content %}
+{% if not logged_in %}
+
+<section class="page-heading admin-login-heading">
+    <span class="eyebrow">ADMINISTRATION</span>
+    <h1>Admin Login</h1>
+    <p>Sign in to review and update citizen complaints.</p>
+</section>
+
+<form class="form-card admin-login-card" method="POST"
+      action="{{ url_for('admin') }}">
+
+    <div class="form-group admin-icon-group">
+        <label for="username">Username</label>
+        <div class="admin-input-wrap">
+            <span class="admin-field-icon" aria-hidden="true">👤</span>
+            <input id="username" name="username" type="text"
+                   placeholder="Enter admin username"
+                   autocomplete="username" required>
+        </div>
+    </div>
+
+    <div class="form-group admin-icon-group">
+        <label for="password">Password</label>
+        <div class="admin-input-wrap">
+            <span class="admin-field-icon" aria-hidden="true">🔒</span>
+            <input id="password" name="password" type="password"
+                   placeholder="Enter admin password"
+                   autocomplete="current-password" required>
+        </div>
+    </div>
+
+    <button class="button admin-login-submit" type="submit">
+        Admin Login
+    </button>
+
+    <p class="admin-login-footer">
+        Authorized administrators only
+    </p>
+
+</form>
+
+{% else %}
+
+<section class="page-heading admin-heading">
+    <div>
+        <span class="eyebrow">ADMINISTRATION</span>
+        <h1>Complaint Dashboard</h1>
+        <p>Review complaints and update their status.</p>
+    </div>
+
+    <form method="POST" action="{{ url_for('admin_logout') }}">
+        <button class="button button-outline" type="submit">
+            Log Out
+        </button>
+    </form>
+</section>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <span>Total Complaints</span>
+        <strong>{{ total }}</strong>
+    </div>
+
+    <div class="stat-card">
+        <span>Submitted</span>
+        <strong>{{ pending }}</strong>
+    </div>
+
+    <div class="stat-card">
+        <span>In Progress</span>
+        <strong>{{ in_progress }}</strong>
+    </div>
+
+    <div class="stat-card">
+        <span>Resolved</span>
+        <strong>{{ resolved }}</strong>
+    </div>
+</div>
+
+<form class="search-card" method="GET"
+      action="{{ url_for('admin_dashboard') }}">
+
+    <label for="q">Search by ID, title or location</label>
+
+    <div class="search-row">
+        <input id="q" name="q" type="search"
+               value="{{ search }}"
+               placeholder="Search complaints...">
+
+        <button class="button" type="submit">Search</button>
+    </div>
+</form>
+
+<section class="section">
+    <h2>All Complaints</h2>
+
+    {% if complaints %}
+
+    <div class="admin-list">
+
+        {% for item in complaints %}
+
+        <article class="admin-complaint">
+
+            <div class="admin-complaint-heading">
+                <div>
+                    <span class="eyebrow">
+                        {{ item['complaint_id'] }}
+                    </span>
+
+                    <h3>{{ item['title'] }}</h3>
+
+                    <p class="muted">
+                        {{ item['category'] }} · {{ item['location'] }}
+                    </p>
+                </div>
+
+                <span class="status-badge status-{{ item['status']|lower|replace(' ', '-') }}">
+                    {{ item['status'] }}
+                </span>
+            </div>
+
+            <p>{{ item['description'] }}</p>
+            
+<!-- Complaint Photo -->
+<div class="complaint-media">
+    <h4>Complaint Photo</h4>
+
+    {% if item['photo'] %}
+        <a href="{{ url_for('static', filename='uploads/' ~ item['photo']) }}"
+           target="_blank" rel="noopener">
+            <img
+                src="{{ url_for('static', filename='uploads/' ~ item['photo']) }}"
+                alt="Photo for {{ item['complaint_id'] }}"
+                class="complaint-photo"
+                loading="lazy">
+        </a>
+    {% else %}
+        <p class="muted">No photo uploaded.</p>
+    {% endif %}
+</div>
+
+<!-- Complaint Map -->
+<div class="complaint-map">
+    <h4>Complaint Location</h4>
+
+    {% if item['latitude'] is not none and item['longitude'] is not none %}
+        <p class="muted">
+            Latitude: {{ item['latitude'] }},
+            Longitude: {{ item['longitude'] }}
+        </p>
+
+        <iframe
+            title="Map for {{ item['complaint_id'] }}"
+            width="100%"
+            height="280"
+            style="border:0; border-radius:12px;"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            src="https://www.openstreetmap.org/export/embed.html?bbox={{ item['longitude'] - 0.005 }},{{ item['latitude'] - 0.005 }},{{ item['longitude'] + 0.005 }},{{ item['latitude'] + 0.005 }}&layer=mapnik&marker={{ item['latitude'] }},{{ item['longitude'] }}">
+        </iframe>
+
+        <p>
+            <a href="https://www.google.com/maps?q={{ item['latitude'] }},{{ item['longitude'] }}"
+               target="_blank" rel="noopener">
+                Open location in Google Maps
+            </a>
+        </p>
+    {% else %}
+        <p class="muted">No map location was saved for this complaint.</p>
+    {% endif %}
+</div>
+
+
+            <p class="muted">
+                Priority: {{ item['priority'] }}
+                · Submitted: {{ item['created_at'] }}
+            </p>
+
+            <form class="admin-update-form" method="POST"
+                  action="{{ url_for('update_complaint', row_id=item['id']) }}">
+
+                <div class="form-group">
+                    <label for="status-{{ item['id'] }}">Status</label>
+
+                   
+<select id="status-{{ item['id'] }}"
+        name="status" required>
+    {% for status in statuses %}
+        <option value="{{ status }}"
+            {% if item['status'] == status %}selected{% endif %}>
+            {{ status }}
+        </option>
+    {% endfor %}
+</select>
+
+                </div>
+
+                <div class="form-group">
+                    <label for="department-{{ item['id'] }}">
+                        Department
+                    </label>
+
+                    <input id="department-{{ item['id'] }}"
+                           name="department" maxlength="100"
+                           value="{{ item['department'] }}">
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="remark-{{ item['id'] }}">
+                        Admin Remark
+                    </label>
+
+                    <textarea id="remark-{{ item['id'] }}"
+                              name="admin_remark"
+                              maxlength="1000" rows="2">{{ item['admin_remark'] }}</textarea>
+                </div>
+
+                <button class="button" type="submit">
+                    Save Update
+                </button>
+
+            </form>
+
+        </article>
+
+        {% endfor %}
+
+    </div>
+
+    {% else %}
+
+    <div class="empty-state">
+        <h3>No complaints found</h3>
+        <p>Submit a report first, or try another search.</p>
+    </div>
+
+    {% endif %}
+</section>
+
+{% endif %}
+{% endblock %}

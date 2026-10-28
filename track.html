@@ -1,0 +1,78 @@
+
+{% extends "base.html" %}
+
+{% block title %}Track Complaint | SmartCity Connect{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+    <span class="eyebrow">Complaint tracking</span>
+    <h1>Track Your Complaint</h1>
+    <p>Enter the complaint ID you received after submitting a report.</p>
+</section>
+
+<form class="search-card" method="POST" action="{{ url_for('track') }}">
+    <label for="complaint_id">Complaint ID</label>
+    <div class="search-row">
+        <input id="complaint_id" name="complaint_id" type="text"
+            placeholder="Example: SC-1001"
+            value="{{ request.form.get('complaint_id', '') }}" required>
+        <button class="button" type="submit">Search</button>
+    </div>
+</form>
+
+{% if searched %}
+    {% if complaint %}
+        <section class="result-card">
+            <div class="result-top">
+                <div>
+                    <span class="eyebrow">Complaint details</span>
+                    <h2>{{ complaint['title'] }}</h2>
+                    <p class="muted">{{ complaint['complaint_id'] }}</p>
+                </div>
+                <span class="status-badge status-{{ complaint['status']|lower|replace(' ', '-') }}">
+                    {{ complaint['status'] }}
+                </span>
+            </div>
+
+            <div class="details-grid">
+                <div><span>Category : </span><strong>{{ complaint['category'] }}</strong></div>
+                <div><span>Priority : </span><strong>{{ complaint['priority'] }}</strong></div>
+                <div><span>Location : </span><strong>{{ complaint['location'] }}</strong></div>
+                <div><span>Submitted : </span><strong>{{ complaint['created_at'] }}</strong></div>
+                <div><span>Department : </span><strong>{{ complaint['department'] }}</strong></div>
+            </div>
+
+            <div class="description-box">
+                <h3>Description</h3>
+                <p>{{ complaint['description'] }}</p>
+            </div>
+
+            <div class="description-box">
+                <h3>Admin Remark</h3>
+                <p>{{ complaint['admin_remark'] or 'No remark has been added yet.' }}</p>
+            </div>
+
+            {% if complaint['status'] == 'Rejected' %}
+                <div class="alert error">This complaint has been marked as rejected. Check the admin remark for details.</div>
+            {% else %}
+                <h3 class="timeline-title">Progress</h3>
+                {% set steps = ['Submitted', 'In Progress', 'Resolved'] %}
+                <div class="timeline">
+                    {% for step in steps %}
+                        <div class="timeline-step
+                            {% if steps.index(complaint['status']) >= loop.index0 %}completed{% endif %}">
+                            <span class="timeline-dot"></span>
+                            <span>{{ step }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </section>
+    {% else %}
+        <div class="empty-state">
+            <h2>Complaint Not Found</h2>
+            <p>Check the ID and try again. Example: SC-1001.</p>
+        </div>
+    {% endif %}
+{% endif %}
+{% endblock %}

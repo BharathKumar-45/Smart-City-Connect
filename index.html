@@ -1,0 +1,131 @@
+
+{% extends "base.html" %}
+
+{% block title %}Home | SmartCity Connect{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-text">
+        <span class="eyebrow">A smarter way to improve our city</span>
+        <h1>Make Your City Better, One Report at a Time.</h1>
+        <p>
+            Report potholes, garbage overflow, water leakage and other
+            civic problems. Follow your complaint from submission to resolution.
+        </p>
+        <div class="hero-actions">
+            <a class="button" href="{{ url_for('report') }}">Report an Issue</a>
+            <a class="button button-outline" href="{{ url_for('track') }}">Track Complaint</a>
+        </div>
+    </div>
+    <div class="hero-art">
+        <div class="city-icon">🏙️</div>
+        <h3>Your City. Your Voice.</h3>
+        <p>Small reports can support better communities.</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="section-heading">
+        <div>
+            <span class="eyebrow">Project overview</span>
+            <h2>Complaint Dashboard</h2>
+        </div>
+        <p>Statistics update when complaints are submitted or changed.</p>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <span>Total Complaints</span>
+            <strong>{{ total }}</strong>
+        </div>
+        <div class="stat-card">
+            <span>Submitted</span>
+            <strong>{{ pending }}</strong>
+        </div>
+        <div class="stat-card">
+            <span>In Progress</span>
+            <strong>{{ in_progress }}</strong>
+        </div>
+        <div class="stat-card">
+            <span>Resolved</span>
+            <strong>{{ resolved }}</strong>
+        </div>
+    </div>
+</section>
+
+<!-- Common City Issues -->
+<section class="section">
+    <div class="section-heading">
+        <div>
+            <span class="eyebrow">WHAT CAN YOU REPORT?</span>
+            <h2>Common City Issues</h2>
+        </div>
+        <p>Help make our city cleaner, safer, and better for everyone.</p>
+    </div>
+
+    <div class="category-grid">
+        <article class="category-card">
+            <span class="category-symbol">🛣️</span>
+            <h3>Potholes</h3>
+            <p>Report damaged roads and unsafe road surfaces.</p>
+            <a href="{{ url_for('report') }}">Report issue →</a>
+        </article>
+
+        <article class="category-card">
+            <span class="category-symbol">🗑️</span>
+            <h3>Garbage Overflow</h3>
+            <p>Report overflowing bins and uncollected waste.</p>
+            <a href="{{ url_for('report') }}">Report issue →</a>
+        </article>
+
+        <article class="category-card">
+            <span class="category-symbol">💧</span>
+            <h3>Water Leakage</h3>
+            <p>Report leaking pipes and unnecessary water wastage.</p>
+            <a href="{{ url_for('report') }}">Report issue →</a>
+        </article>
+
+        <article class="category-card">
+            <span class="category-symbol">💡</span>
+            <h3>Broken Streetlights</h3>
+            <p>Report broken lights and dark public areas.</p>
+            <a href="{{ url_for('report') }}">Report issue →</a>
+        </article>
+    </div>
+</section>
+
+<!-- How It Works -->
+<section class="section how-section">
+    <span class="eyebrow">SIMPLE PROCESS</span>
+    <h2>How It Works</h2>
+    <p class="section-description">
+        Reporting a city issue takes just a few simple steps.
+    </p>
+
+    <div class="steps-grid">
+        <div>
+            <strong>01</strong>
+            <h3>Report</h3>
+            <p>Describe the problem and provide its location.</p>
+        </div>
+
+        <div>
+            <strong>02</strong>
+            <h3>Get an ID</h3>
+            <p>Receive a unique complaint identification number.</p>
+        </div>
+
+        <div>
+            <strong>03</strong>
+            <h3>Track</h3>
+            <p>Use your complaint ID to check its latest status.</p>
+        </div>
+
+        <div>
+            <strong>04</strong>
+            <h3>Follow Progress</h3>
+            <p>See status updates recorded by the administrator.</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

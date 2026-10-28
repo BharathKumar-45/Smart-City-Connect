@@ -1,0 +1,20 @@
+```html
+{% extends "base.html" %}
+
+{% block title %}About | SmartCity Connect{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+    <span class="eyebrow">About our project</span>
+    <h1>Technology for Better Communities</h1>
+    <p>A simple digital platform for reporting and tracking everyday city issues.</p>
+</section>
+
+<section class="about-hero">
+    <img
+        src="{{ url_for('static', filename='images/smart-city.png') }}"
+        alt="Smart city skyline with connected urban technology"
+    >
+</section>
+{% endblock %}
+```

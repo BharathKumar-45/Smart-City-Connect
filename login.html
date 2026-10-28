@@ -1,0 +1,50 @@
+
+{% extends "base.html" %}
+
+{% block title %}Citizen Login | SmartCity Connect{% endblock %}
+
+{% block content %}
+<section class="page-heading login-heading">
+    <span class="eyebrow">SMARTCITY CONNECT</span>
+    <h1>Login</h1>
+    <p>I'm a citizen</p>
+</section>
+
+<form class="form-card login-card" method="POST"
+      action="{{ url_for('login') }}">
+
+    
+<div class="form-group login-icon-group">
+    <label for="email">Email address</label>
+    <div class="login-input-wrap">
+        <span class="login-field-icon" aria-hidden="true">✉</span>
+        <input id="email" name="email" type="email"
+               placeholder="Email address"
+               required autocomplete="email">
+    </div>
+</div>
+
+<div class="form-group login-icon-group">
+    <label for="password">Password</label>
+    <div class="login-input-wrap">
+        <span class="login-field-icon" aria-hidden="true">🔒</span>
+        <input id="password" name="password" type="password"
+               placeholder="Password"
+               required autocomplete="current-password">
+    </div>
+</div>
+
+
+    <label class="remember-option">
+        <input type="checkbox" name="remember">
+        <span>Keep me logged in</span>
+    </label>
+
+    <button class="btn login-submit" type="submit">Log in</button>
+
+    <p class="login-footer">
+        Don't have an account?
+        <a href="{{ url_for('register') }}">Create one</a>
+    </p>
+</form>
+{% endblock %}
